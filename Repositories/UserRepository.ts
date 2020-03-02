@@ -9,6 +9,14 @@ import { IUser } from '../Models/IUser';
 @injectable()
 class UserRepository implements IUserRepository {
 
+    /** @GET */
+
+    //#region snippet_GetAll
+
+    public getAllAsync = async (): Promise<any> => await User.find();
+
+    //#endregion
+
     /**@POST */
 
     //#region snippet_Create

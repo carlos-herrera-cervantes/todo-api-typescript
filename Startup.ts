@@ -74,6 +74,7 @@ class App {
         const userRoutes = express.Router();
 
         userRoutes.route('/')
+        .get((request: Request, response: Response) => this.userController.getAllAsync(request, response))
         .post((request: Request, response: Response) => this.userController.createAsync(request, response));
 
         return userRoutes;
