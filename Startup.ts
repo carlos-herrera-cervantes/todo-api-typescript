@@ -77,6 +77,9 @@ class App {
         .get((request: Request, response: Response) => this.userController.getAllAsync(request, response))
         .post((request: Request, response: Response) => this.userController.createAsync(request, response));
 
+        userRoutes.route('/:id')
+        .get((request: Request, response: Response) => this.userController.getByIdAsync(request, response));
+
         return userRoutes;
     }
 

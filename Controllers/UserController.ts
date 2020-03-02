@@ -28,6 +28,24 @@ class UserController {
 
     //#endregion
 
+    //#region snippet_GetByIdAsync
+
+    public async getByIdAsync(request: Request, response: Response): Promise<any> {
+        try {
+            let id = request.params.id;
+            let user = await this._userRepository.getByIdAsync(id);
+
+            if (!user) { return response.status(404).send({ message: 'Usuario no encontrado' }); }
+
+            return response.status(200).send(user);
+        }
+        catch (error) {
+            return response.status(500).send(error);
+        }
+    }
+
+    //#endregion
+
     /**@POST */
 
     //#region snippet_Create

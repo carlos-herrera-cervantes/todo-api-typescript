@@ -17,6 +17,12 @@ class UserRepository implements IUserRepository {
 
     //#endregion
 
+    //#region snippet_GetById
+
+    public getByIdAsync = async (id: String): Promise<any> => await User.findById(id);
+
+    //#endregion
+
     /**@POST */
 
     //#region snippet_Create
