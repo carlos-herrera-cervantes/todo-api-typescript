@@ -11,10 +11,6 @@ class UserController {
         this._userRepository = userRepository;
     }
 
-    /** @GET */
-
-    //#region snippet_GetAll
-
     public async getAllAsync(request: Request, response: Response): Promise<any> {
         try {
             let users = await this._userRepository.getAllAsync();
@@ -25,10 +21,6 @@ class UserController {
             return response.status(500).send(error);
         }
     }
-
-    //#endregion
-
-    //#region snippet_GetByIdAsync
 
     public async getByIdAsync(request: Request, response: Response): Promise<any> {
         try {
@@ -43,13 +35,7 @@ class UserController {
             return response.status(500).send(error);
         }
     }
-
-    //#endregion
-
-    /**@POST */
-
-    //#region snippet_Create
-
+    
     public async createAsync(request: Request, response: Response): Promise<any> {
         try {
             let user = request.body;
@@ -63,7 +49,6 @@ class UserController {
         }
     }
 
-    //#endregion
 }
 
 export { UserController };

@@ -20,16 +20,10 @@ class App {
         this.configure();
     }
 
-    //#region snippet_ConfigureServices
-
     private configureServices(): void {
         this.setupDatabase();
         this.setupControllers();
     }
-
-    //#endregion
-
-    //#region snippet_Configure
 
     private configure(): void {
         this.app.use(express.json());
@@ -37,17 +31,7 @@ class App {
         this.app.use('/api/v1/users', this.setupUserRoutes());
     }
 
-    //#endregion
-
-    /** @HELPERS */
-
-    //#region snippet_StartApp
-
     public listen = (): void => this.app.listen(process.env.PORT, () => console.log(`Server running at port ${process.env.PORT}`));
-
-    //#endregion
-
-    //#region snippet_SetupDatabase
 
     private setupDatabase(): void {
         const URI =  `mongodb://${process.env.MONGODB_HOST}/${process.env.MONGODB_DATABASE}`;
@@ -57,18 +41,10 @@ class App {
         database.on('error', console.error.bind(console, 'MongoDB connection error'));
     }
 
-    //#endregion
-
-    //#region snippet_SetupControllers
-
     private setupControllers(): void {
         const userRepository = container.get<IUserRepository>(IDENTIFIERS.IUserRepository);
         this.userController = new UserController(userRepository);
     }
-
-    //#endregion
-
-    //#region snipept_SetupRoutes
 
     private setupUserRoutes(): void {
         const userRoutes = express.Router();
@@ -82,8 +58,6 @@ class App {
 
         return userRoutes;
     }
-
-    //#endregion
 
 }
 

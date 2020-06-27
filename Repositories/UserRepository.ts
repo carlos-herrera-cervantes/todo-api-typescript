@@ -9,31 +9,15 @@ import { IUser } from '../Models/IUser';
 @injectable()
 class UserRepository implements IUserRepository {
 
-    /** @GET */
-
-    //#region snippet_GetAll
-
     public getAllAsync = async (): Promise<any> => await User.find();
-
-    //#endregion
-
-    //#region snippet_GetById
 
     public getByIdAsync = async (id: String): Promise<any> => await User.findById(id);
 
-    //#endregion
-
-    /**@POST */
-
-    //#region snippet_Create
-
-    async createAsync(user: IUser): Promise<any> {
-        let userObject = await User.create(user);
+    public async createAsync(user: IUser): Promise<any> {
+        const userObject = await User.create(user);
 
         await userObject.save();
     }
-
-    //#endregion
 
 }
 
