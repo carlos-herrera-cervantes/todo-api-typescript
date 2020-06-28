@@ -1,16 +1,16 @@
 'use strcit';
 
-import { App } from './Startup';
+import { Startup } from './Startup';
 
-class Startup {
+class Program {
     
     constructor() { }
 
-    public createHostBuilder(): void {
-        const app = new App();
+    public createHostBuilder = (): void =>{
+        const app = new Startup();
         app.listen();
     }
 
 }
 
-new Startup().createHostBuilder();
+new Program().createHostBuilder();

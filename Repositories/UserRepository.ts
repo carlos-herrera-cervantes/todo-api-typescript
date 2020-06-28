@@ -13,12 +13,17 @@ class UserRepository implements IUserRepository {
 
     public getByIdAsync = async (id: String): Promise<any> => await User.findById(id);
 
-    public async createAsync(user: IUser): Promise<any> {
+    public createAsync = async (user: IUser): Promise<any>  => {
         const userObject = await User.create(user);
 
-        await userObject.save();
+        return await userObject.save();
     }
 
+    public updateAsync = async (id: String, user: IUser): Promise<any> => await User.findOneAndUpdate({ _id: id }, { $set: user }, { new: true });
+
+    public deleteByIdAsync = async (id: String): Promise<any> => await User.deleteOne({ _id: id });
+
+    public countAsync = async (): Promise<any> => await User.countDocuments();
 }
 
 export { UserRepository };
