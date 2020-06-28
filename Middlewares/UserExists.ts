@@ -10,24 +10,19 @@ class UserExists {
 
     private readonly _userRepository: IUserRepository;
 
-    constructor(userRepository: IUserRepository) {
+    constructor (userRepository: IUserRepository) {
         this._userRepository = userRepository;
     }
 
-    public userExistsById = async (request: Request, response: Response, next: NextFunction): Promise<any> => {
-        try {
-            const { params: { id } } = request;
-            const user = await this._userRepository.getByIdAsync(id);
+    public async userExistsById (request: Request, response: Response, next: NextFunction): Promise<any> {
+        const { params: { id } } = request;
+        const user = await this._userRepository.getByIdAsync(id);
 
-            if (!user) {
-                return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('UserNotFound') });
-            }
+        if (!user) {
+            return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('UserNotFound') });
+        }
 
-            next();
-        }
-        catch (error) {
-            return response.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({ status: false, message: error.message });
-        }
+        next();
     }
 
 }

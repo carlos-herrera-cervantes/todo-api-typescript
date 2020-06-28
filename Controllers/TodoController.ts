@@ -3,67 +3,68 @@
 import { Request, Response } from 'express';
 import { STATUS_CODES } from '../Constants/StatusCodes';
 import { localizer } from '../Middlewares/Localizer';
-import { userExists } from '../Middlewares/UserExists';
+import { todoAttribute } from '../Middlewares/TodoAttribute';
 import { validator } from '../Middlewares/Validator';
 import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } from '@overnightjs/core';
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
-import { IUserRepository } from '../Repositories/IUserRepository';
+import { ITodoRepository } from '../Repositories/ITodoRepository';
 
 @ClassMiddleware(localizer.configureLanguages)
-@Controller('api/v1/users')
-class UserController {
+@Controller('api/v1/todos')
+class TodoController {
 
-    private readonly _userRepository: IUserRepository;
+    private readonly _todoRepository: ITodoRepository;
 
-    constructor (userRepository: IUserRepository) {
-        this._userRepository = userRepository;
+    constructor (todoRepository: ITodoRepository) {
+        this._todoRepository = todoRepository;
     }
 
     @Get()
     @ErrorMiddleware
     public async getAllAsync (request: Request, response: Response): Promise<any> {
-        const users = await this._userRepository.getAllAsync();
-        return response.status(STATUS_CODES.OK).send({ status: true, data: users });
+        const todos = await this._todoRepository.getAllAsync();
+        return response.status(STATUS_CODES.OK).send({ status: true, data: todos });
     }
-
 
     @Get(':id')
     @Middleware(validator.isValidObjectId)
-    @Middleware(userExists.userExistsById)
+    @Middleware(todoAttribute.todoExistsById)
     @ErrorMiddleware
     public async getByIdAsync (request: Request, response: Response): Promise<any> {
         const { params: { id } } = request;
-        const user = await this._userRepository.getByIdAsync(id);
-        return response.status(STATUS_CODES.OK).send({ status: true, data: user });
+        const todo = await this._todoRepository.getByIdAsync(id);
+        return response.status(STATUS_CODES.OK).send({ status: true, data: todo });
     }
-    
-    @Post()
+
+    @Post(':id/users')
     @ErrorMiddleware
     public async createAsync (request: Request, response: Response): Promise<any> {
-        const { body } = request;
-        const result = await this._userRepository.createAsync(body);
+        const { params: { id }, body } = request;
+        body.user = id;
+        const result = await this._todoRepository.createAsync(body);
         return response.status(STATUS_CODES.CREATED).send({ status: true, data: result });
     }
 
     @Patch(':id')
     @Middleware(validator.isValidObjectId)
-    @Middleware(userExists.userExistsById)
+    @Middleware(todoAttribute.todoExistsById)
     @ErrorMiddleware
     public async updateAsync (request: Request, response: Response): Promise<any> {
         const { params: { id }, body } = request;
-        const result = await this._userRepository.updateAsync(id, body);
+        const result = await this._todoRepository.updateAsync(id, body);
         return response.status(STATUS_CODES.CREATED).send({ status: true, data: result });
     }
 
     @Delete(':id')
     @Middleware(validator.isValidObjectId)
-    @Middleware(userExists.userExistsById)
+    @Middleware(todoAttribute.todoExistsById)
+    @ErrorMiddleware
     public async deleteAsync (request: Request, response: Response): Promise<any> {
         const { params: { id } } = request;
-        await this._userRepository.deleteByIdAsync(id);
+        await this._todoRepository.deleteByIdAsync(id);
         return response.status(STATUS_CODES.NO_CONTENT).send({ status: true, data: {} });
     }
 
 }
 
-export { UserController };
+export { TodoController };

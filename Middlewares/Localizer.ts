@@ -6,12 +6,8 @@ import path from 'path';
 
 class Localizer {
 
-    private setLanguagesDirectory = (): void => {
+    public configureLanguages (request: Request, response: Response, next: NextFunction): any {
         i18n.configure({ directory: path.join(__dirname, '..', 'Locales'), defaultLocale: 'es' });
-    }
-
-    public configureLanguages = (request: Request, response: Response, next: NextFunction): void => {
-        this.setLanguagesDirectory();
         i18n.init(request, response);
         next();
     }

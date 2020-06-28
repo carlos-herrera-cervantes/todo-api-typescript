@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es6",
         "lib": [
             "es6",
             "dom"
         ],
         "types": [
-            "reflect-metadata"
+            "reflect-metadata",
+            "node"
         ],
         "module": "commonjs",
         "moduleResolution": "node",

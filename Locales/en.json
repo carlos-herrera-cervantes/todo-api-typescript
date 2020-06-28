@@ -1,4 +1,5 @@
 {
     "UserNotFound": "User not found.",
+    "TodoNotFound": "Todo not found.",
     "InvalidObjectId": "The entered ID is not valid."
 }

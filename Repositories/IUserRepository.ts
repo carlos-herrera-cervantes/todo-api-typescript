@@ -12,8 +12,6 @@ interface IUserRepository  {
     updateAsync(id: String, user: IUser): Promise<any>;
 
     deleteByIdAsync(id: String): Promise<any>;
-
-    countAsync(): Promise<any>;
 }
 
 export { IUserRepository };

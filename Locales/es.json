@@ -1,4 +1,5 @@
 {
     "UserNotFound": "Usuario no encontrado.",
+    "TodoNotFound": "Nota no encontrada.",
     "InvalidObjectId": "El ID ingresado no es válido."
 }

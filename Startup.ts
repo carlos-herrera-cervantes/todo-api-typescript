@@ -8,10 +8,12 @@ import container from './Config/inversify.config';
 import IDENTIFIERS from './Constants/Identifiers';
 import { IUserRepository } from './Repositories/IUserRepository';
 import { UserController } from './Controllers/UserController';
+import { ITodoRepository } from './Repositories/ITodoRepository';
+import { TodoController } from './Controllers/TodoController';
 
 class Startup extends Server {
 
-    constructor() {
+    constructor () {
         super();
 
         dotenv.config();
@@ -25,7 +27,7 @@ class Startup extends Server {
      * Starts the server
      * @returns {Void}
      */
-    public listen = (): void => {
+    public listen (): void {
         this.app.listen(process.env.PORT, () => console.info(`Server starts in the port ${process.env.PORT}`));
     }
 
@@ -33,7 +35,7 @@ class Startup extends Server {
      * Connect with MongoDB Server
      * @returns {Void}
      */
-    private setupDatabase = (): void => {
+    private setupDatabase (): void {
         const URI = `mongodb://${process.env.MONGODB_HOST}/${process.env.MONGODB_DATABASE}`;
         mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -45,10 +47,12 @@ class Startup extends Server {
      * Setup the controllers
      * @returns {Array}
      */
-    private setupControllers = (): Array<any> => {
+    private setupControllers (): Array<any> {
         const userRepository = container.get<IUserRepository>(IDENTIFIERS.IUserRepository);
         const userController = new UserController(userRepository);
-        const controllers = [ userController ];
+        const todoRepository = container.get<ITodoRepository>(IDENTIFIERS.ITodoRepository);
+        const todoController = new TodoController(todoRepository);
+        const controllers = [ userController, todoController ];
 
         return controllers;
     }
