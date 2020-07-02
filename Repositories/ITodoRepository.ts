@@ -3,7 +3,7 @@
 import { ITodo } from '../Models/ITodo';
 
 interface ITodoRepository {
-    getAllAsync(): Promise<any>;
+    getAllAsync(request: any): Promise<any>;
 
     getByIdAsync(id: String): Promise<any>;
 

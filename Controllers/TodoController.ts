@@ -8,6 +8,7 @@ import { validator } from '../Middlewares/Validator';
 import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } from '@overnightjs/core';
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
 import { ITodoRepository } from '../Repositories/ITodoRepository';
+import { Request as RequestDto } from '../Models/Request';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/todos')
@@ -22,7 +23,9 @@ class TodoController {
     @Get()
     @ErrorMiddleware
     public async getAllAsync (request: Request, response: Response): Promise<any> {
-        const todos = await this._todoRepository.getAllAsync();
+        const { query } = request;
+        const dto = new RequestDto(query).setSort().setPagination().setCriteria().setRelation();
+        const todos = await this._todoRepository.getAllAsync(dto.queryFilter);
         return response.status(STATUS_CODES.OK).send({ status: true, data: todos });
     }
 

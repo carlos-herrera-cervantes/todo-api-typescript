@@ -1,7 +1,9 @@
 'use strict';
 
 interface IDocumentRepository {
-    countAsync(): Promise<any>
+    countAsync(request: any): Promise<any>;
+
+    getOneAsync(request: any): Promise<any>;
 }
 
 export { IDocumentRepository };

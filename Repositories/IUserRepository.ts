@@ -3,7 +3,7 @@
 import { IUser } from "../Models/IUser";
 
 interface IUserRepository  {
-    getAllAsync(): Promise<any>;
+    getAllAsync(request: any): Promise<any>;
 
     getByIdAsync(id: String): Promise<any>;
 

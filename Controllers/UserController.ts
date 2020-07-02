@@ -8,6 +8,7 @@ import { validator } from '../Middlewares/Validator';
 import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } from '@overnightjs/core';
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
 import { IUserRepository } from '../Repositories/IUserRepository';
+import { Request as RequestDto } from '../Models/Request';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/users')
@@ -22,7 +23,9 @@ class UserController {
     @Get()
     @ErrorMiddleware
     public async getAllAsync (request: Request, response: Response): Promise<any> {
-        const users = await this._userRepository.getAllAsync();
+        const { query } = request;
+        const dto = new RequestDto(query).setSort().setPagination().setCriteria().setRelation();
+        const users = await this._userRepository.getAllAsync(dto.queryFilter);
         return response.status(STATUS_CODES.OK).send({ status: true, data: users });
     }
 
