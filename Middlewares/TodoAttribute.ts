@@ -14,9 +14,9 @@ class TodoAttribute {
         this._todoRepository = todoRepository;
     }
 
-    public async todoExistsById (request: Request, response: Response, next: NextFunction): Promise<any> {
+    public todoExistsById = async (request: Request, response: Response, next: NextFunction): Promise<any> => {
         const { params: { id } } = request;
-        const todo = this._todoRepository.getByIdAsync(id);
+        const todo = await this._todoRepository.getByIdAsync(id);
 
         if (!todo) {
             return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('TodoNotFound') });

@@ -5,18 +5,35 @@ import container from '../Config/inversify.config';
 import IDENTIFIERS from '../Constants/Identifiers';
 import { STATUS_CODES } from '../Constants/StatusCodes';
 import { IUserRepository } from '../Repositories/IUserRepository';
+import { IDocumentRepository } from '../Repositories/IDocumentRepository';
+import { IUser } from '../Models/IUser';
+import { Request as RequestDto } from '../Models/Request';
 
 class UserExists {
 
     private readonly _userRepository: IUserRepository;
+    private readonly _documentRepository: IDocumentRepository<IUser>;
 
-    constructor (userRepository: IUserRepository) {
+    constructor (userRepository: IUserRepository, documentRepository: IDocumentRepository<IUser>) {
         this._userRepository = userRepository;
+        this._documentRepository = documentRepository;
     }
 
-    public async userExistsById (request: Request, response: Response, next: NextFunction): Promise<any> {
+    public userExistsById = async (request: Request, response: Response, next: NextFunction): Promise<any> => {
         const { params: { id } } = request;
         const user = await this._userRepository.getByIdAsync(id);
+
+        if (!user) {
+            return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('UserNotFound') });
+        }
+
+        next();
+    }
+
+    public userExistsByEmail = async (request: Request, response: Response, next: NextFunction): Promise<any> => {
+        const { body: { email } } = request;
+        const dto = new RequestDto({ email }).setCriteria();
+        const user = await this._documentRepository.getOneAsync(dto.queryFilter);
 
         if (!user) {
             return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('UserNotFound') });
@@ -28,6 +45,7 @@ class UserExists {
 }
 
 const userRepository = container.get<IUserRepository>(IDENTIFIERS.IUserRepository);
-const userExists = new UserExists(userRepository);
+const documentRepository = container.get<IDocumentRepository<IUser>>(IDENTIFIERS.IDocumentRepositoryUser);
+const userExists = new UserExists(userRepository, documentRepository);
 
 export { userExists };

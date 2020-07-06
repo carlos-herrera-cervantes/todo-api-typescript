@@ -1,6 +1,6 @@
 'use strict';
 
-interface IDocumentRepository {
+interface IDocumentRepository<T> {
     countAsync(request: any): Promise<any>;
 
     getOneAsync(request: any): Promise<any>;

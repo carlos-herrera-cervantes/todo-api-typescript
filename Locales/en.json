@@ -1,5 +1,9 @@
 {
     "UserNotFound": "User not found.",
     "TodoNotFound": "Todo not found.",
-    "InvalidObjectId": "The entered ID is not valid."
+    "InvalidObjectId": "The entered ID is not valid.",
+    "InvalidCredentials": "Wrong user or password.",
+    "InvalidPermissions": "You don't have permission to see this content.",
+    "InvalidToken": "The token is invalid.",
+    "AccessDenied": "You don't have the sufficient permissions to do this action."
 }

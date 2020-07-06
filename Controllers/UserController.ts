@@ -9,6 +9,9 @@ import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } fro
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
 import { IUserRepository } from '../Repositories/IUserRepository';
 import { Request as RequestDto } from '../Models/Request';
+import { authorize } from '../Middlewares/Authorization';
+import { hash } from 'bcrypt';
+import { ROLES } from '../Constants/Roles';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/users')
@@ -21,6 +24,8 @@ class UserController {
     }
 
     @Get()
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @ErrorMiddleware
     public async getAllAsync (request: Request, response: Response): Promise<any> {
         const { query } = request;
@@ -31,6 +36,8 @@ class UserController {
 
 
     @Get(':id')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(userExists.userExistsById)
     @ErrorMiddleware
@@ -44,11 +51,14 @@ class UserController {
     @ErrorMiddleware
     public async createAsync (request: Request, response: Response): Promise<any> {
         const { body } = request;
+        body.password = await hash(body.password, 10);
         const result = await this._userRepository.createAsync(body);
         return response.status(STATUS_CODES.CREATED).send({ status: true, data: result });
     }
 
     @Patch(':id')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(userExists.userExistsById)
     @ErrorMiddleware
@@ -59,6 +69,8 @@ class UserController {
     }
 
     @Delete(':id')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(userExists.userExistsById)
     public async deleteAsync (request: Request, response: Response): Promise<any> {

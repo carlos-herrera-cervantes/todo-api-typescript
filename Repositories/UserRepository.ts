@@ -8,7 +8,7 @@ import { User } from '../Models/User';
 import { IUser } from '../Models/IUser';
 
 @injectable()
-class UserRepository implements IUserRepository, IDocumentRepository {
+class UserRepository implements IUserRepository, IDocumentRepository<IUser> {
 
     public getAllAsync = async (request: any): Promise<any> => 
         await User

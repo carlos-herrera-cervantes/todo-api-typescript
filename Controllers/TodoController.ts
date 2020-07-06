@@ -9,6 +9,8 @@ import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } fro
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
 import { ITodoRepository } from '../Repositories/ITodoRepository';
 import { Request as RequestDto } from '../Models/Request';
+import { authorize } from '../Middlewares/Authorization';
+import { ROLES } from '../Constants/Roles';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/todos')
@@ -21,6 +23,8 @@ class TodoController {
     }
 
     @Get()
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @ErrorMiddleware
     public async getAllAsync (request: Request, response: Response): Promise<any> {
         const { query } = request;
@@ -30,6 +34,8 @@ class TodoController {
     }
 
     @Get(':id')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(todoAttribute.todoExistsById)
     @ErrorMiddleware
@@ -40,6 +46,8 @@ class TodoController {
     }
 
     @Post(':id/users')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @ErrorMiddleware
     public async createAsync (request: Request, response: Response): Promise<any> {
         const { params: { id }, body } = request;
@@ -49,6 +57,8 @@ class TodoController {
     }
 
     @Patch(':id')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(todoAttribute.todoExistsById)
     @ErrorMiddleware
@@ -59,6 +69,8 @@ class TodoController {
     }
 
     @Delete(':id')
+    @Middleware(authorize.authenticateUser)
+    @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(todoAttribute.todoExistsById)
     @ErrorMiddleware

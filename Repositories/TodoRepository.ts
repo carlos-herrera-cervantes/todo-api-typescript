@@ -8,7 +8,7 @@ import { Todo } from '../Models/Todo';
 import { ITodo } from '../Models/ITodo';
 
 @injectable()
-class TodoRepository implements ITodoRepository, IDocumentRepository {
+class TodoRepository implements ITodoRepository, IDocumentRepository<ITodo> {
 
     public getAllAsync = async (request: any): Promise<any> => 
         await Todo

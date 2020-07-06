@@ -10,6 +10,10 @@ import { IUserRepository } from './Repositories/IUserRepository';
 import { UserController } from './Controllers/UserController';
 import { ITodoRepository } from './Repositories/ITodoRepository';
 import { TodoController } from './Controllers/TodoController';
+import { IDocumentRepository } from './Repositories/IDocumentRepository';
+import { IAccessTokenRepository } from './Repositories/IAccessTokenRepository';
+import { LoginController } from './Controllers/LoginController';
+import { IUser } from './Models/IUser';
 
 class Startup extends Server {
 
@@ -52,7 +56,10 @@ class Startup extends Server {
         const userController = new UserController(userRepository);
         const todoRepository = container.get<ITodoRepository>(IDENTIFIERS.ITodoRepository);
         const todoController = new TodoController(todoRepository);
-        const controllers = [ userController, todoController ];
+        const documentRepository = container.get<IDocumentRepository<IUser>>(IDENTIFIERS.IDocumentRepositoryUser);
+        const accessTokenRepository = container.get<IAccessTokenRepository>(IDENTIFIERS.IAccessTokenRepository);
+        const loginController = new LoginController(documentRepository, accessTokenRepository);
+        const controllers = [ userController, todoController, loginController ];
 
         return controllers;
     }
