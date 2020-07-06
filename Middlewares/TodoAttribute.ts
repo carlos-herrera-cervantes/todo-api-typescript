@@ -3,7 +3,7 @@
 import { Request, Response, NextFunction } from 'express';
 import container from '../Config/inversify.config';
 import IDENTIFIERS from '../Constants/Identifiers';
-import { STATUS_CODES } from '../Constants/StatusCodes';
+import { ResponseDto } from '../Models/Response';
 import { ITodoRepository } from '../Repositories/ITodoRepository';
 
 class TodoAttribute {
@@ -19,7 +19,7 @@ class TodoAttribute {
         const todo = await this._todoRepository.getByIdAsync(id);
 
         if (!todo) {
-            return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('TodoNotFound') });
+            return ResponseDto.notFound(false, response, 'TodoNotFound');
         }
 
         next();

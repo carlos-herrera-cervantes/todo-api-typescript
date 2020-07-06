@@ -1,7 +1,5 @@
 'use strict';
 
-import { resolve, parse } from "path";
-
 class Request {
 
     private queryParams: any;
@@ -31,8 +29,11 @@ class Request {
 
         if (isValidPaginate) {
             const { page, pageSize } = this.queryParams;
-            const parsePage = page == 1 ? 0 : page == 0 ? 0 : page -1;
-            this.queryFilter.pagination = { page: parsePage * pageSize, pageSize };
+            const intPage = parseInt(page);
+            const intPageSize = parseInt(pageSize);
+            const parsePage = intPage == 1 ? 0 : intPage == 0 ? 0 : intPage -1;
+            
+            this.queryFilter.pagination = { page: parsePage * intPageSize, pageSize: intPageSize };
             return this;
         }
 

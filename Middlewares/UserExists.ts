@@ -3,7 +3,7 @@
 import { Request, Response, NextFunction } from 'express';
 import container from '../Config/inversify.config';
 import IDENTIFIERS from '../Constants/Identifiers';
-import { STATUS_CODES } from '../Constants/StatusCodes';
+import { ResponseDto } from '../Models/Response';
 import { IUserRepository } from '../Repositories/IUserRepository';
 import { IDocumentRepository } from '../Repositories/IDocumentRepository';
 import { IUser } from '../Models/IUser';
@@ -24,7 +24,7 @@ class UserExists {
         const user = await this._userRepository.getByIdAsync(id);
 
         if (!user) {
-            return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('UserNotFound') });
+            return ResponseDto.notFound(false, response, 'UserNotFound');
         }
 
         next();
@@ -36,7 +36,7 @@ class UserExists {
         const user = await this._documentRepository.getOneAsync(dto.queryFilter);
 
         if (!user) {
-            return response.status(STATUS_CODES.NOT_FOUND).send({ status: false, message: response.__('UserNotFound') });
+            return ResponseDto.notFound(false, response, 'UserNotFound');
         }
 
         next();

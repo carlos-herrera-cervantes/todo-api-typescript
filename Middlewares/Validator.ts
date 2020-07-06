@@ -1,11 +1,12 @@
 'use strict';
 
-import { STATUS_CODES } from '../Constants/StatusCodes';
 import { ObjectID } from 'mongodb';
 import { Request, Response, NextFunction } from 'express';
 import { IAccessTokenRepository } from '../Repositories/IAccessTokenRepository';
 import container from '../Config/inversify.config';
 import IDENTIFIERS from '../Constants/Identifiers';
+import { StringExtensions } from '../Extensions/StringExtensions';
+import { ResponseDto } from '../Models/Response';
 
 class Validator {
 
@@ -20,7 +21,32 @@ class Validator {
         const isInvalidId = !ObjectID.isValid(id);
 
         if (isInvalidId) {
-            return response.status(STATUS_CODES.BAD_REQUEST).send({ status: false, message: response.__('InvalidObjectId') });
+            return ResponseDto.badRequest(false, response, 'InvalidObjectId');
+        }
+
+        next();
+    }
+
+    public validatePagination (request: Request, response: Response, next: NextFunction): any {
+        const { query: { paginate, page, pageSize } } = request;
+
+        if (!paginate) {
+            return next();
+        }
+
+        const notHavePages = !page || !pageSize;
+        const invalidPaginateParams = StringExtensions.toBoolean(paginate) && notHavePages;
+
+        if (invalidPaginateParams) {
+            return ResponseDto.badRequest(false, response, 'InvalidPaginateParams');
+        }
+
+        const intPage = StringExtensions.toInt(page);
+        const intPageSize = StringExtensions.toInt(pageSize);
+        const invalidPages = intPage <= 0 || intPageSize <= 0 || intPageSize > 100;
+
+        if (invalidPages) {
+            return ResponseDto.badRequest(false, response, 'InvalidPaginateNumbers');
         }
 
         next();
@@ -36,7 +62,7 @@ class Validator {
             return next();
         }
 
-        return response.status(STATUS_CODES.UNAHUTORIZE).send({ status: false, message: response.__('AccessDenied') });
+        return ResponseDto.unauthorize(false, response, 'AccessDenied');
     }
 
 }

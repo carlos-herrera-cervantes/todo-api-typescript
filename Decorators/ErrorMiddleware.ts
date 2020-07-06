@@ -1,6 +1,6 @@
 'use strict';
 
-import { STATUS_CODES } from '../Constants/StatusCodes';
+import { ResponseDto } from '../Models/Response';
 
 function ErrorMiddleware (target: Object, key: string, descriptor: TypedPropertyDescriptor<any>) {
     const original = descriptor.value;
@@ -11,8 +11,7 @@ function ErrorMiddleware (target: Object, key: string, descriptor: TypedProperty
         }
         catch (error) {
             const [ , response, ] = args;
-            
-            return response.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({ status: false, message: error.message });
+            return ResponseDto.internalServerError(false, response, error.message);
         }
     }
 

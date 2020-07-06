@@ -1,7 +1,6 @@
 'use strict';
 
 import { Request, Response } from 'express';
-import { STATUS_CODES } from '../Constants/StatusCodes';
 import { localizer } from '../Middlewares/Localizer';
 import { todoAttribute } from '../Middlewares/TodoAttribute';
 import { validator } from '../Middlewares/Validator';
@@ -11,26 +10,33 @@ import { ITodoRepository } from '../Repositories/ITodoRepository';
 import { Request as RequestDto } from '../Models/Request';
 import { authorize } from '../Middlewares/Authorization';
 import { ROLES } from '../Constants/Roles';
+import { ResponseDto } from '../Models/Response';
+import { IDocumentRepository } from '../Repositories/IDocumentRepository';
+import { ITodo } from '../Models/ITodo';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/todos')
 class TodoController {
 
     private readonly _todoRepository: ITodoRepository;
+    private readonly _documentRepository: IDocumentRepository<ITodo>;
 
-    constructor (todoRepository: ITodoRepository) {
+    constructor (todoRepository: ITodoRepository, documentRepository: IDocumentRepository<ITodo>) {
         this._todoRepository = todoRepository;
+        this._documentRepository = documentRepository;
     }
 
     @Get()
     @Middleware(authorize.authenticateUser)
     @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
+    @Middleware(validator.validatePagination)
     @ErrorMiddleware
     public async getAllAsync (request: Request, response: Response): Promise<any> {
         const { query } = request;
         const dto = new RequestDto(query).setSort().setPagination().setCriteria().setRelation();
+        const totalDocuments = await this._documentRepository.countAsync(dto.queryFilter);
         const todos = await this._todoRepository.getAllAsync(dto.queryFilter);
-        return response.status(STATUS_CODES.OK).send({ status: true, data: todos });
+        return ResponseDto.ok(true, todos, response, query, totalDocuments);
     }
 
     @Get(':id')
@@ -42,7 +48,7 @@ class TodoController {
     public async getByIdAsync (request: Request, response: Response): Promise<any> {
         const { params: { id } } = request;
         const todo = await this._todoRepository.getByIdAsync(id);
-        return response.status(STATUS_CODES.OK).send({ status: true, data: todo });
+        return ResponseDto.ok(true, todo, response);
     }
 
     @Post(':id/users')
@@ -53,7 +59,7 @@ class TodoController {
         const { params: { id }, body } = request;
         body.user = id;
         const result = await this._todoRepository.createAsync(body);
-        return response.status(STATUS_CODES.CREATED).send({ status: true, data: result });
+        return ResponseDto.created(true, result, response);
     }
 
     @Patch(':id')
@@ -65,7 +71,7 @@ class TodoController {
     public async updateAsync (request: Request, response: Response): Promise<any> {
         const { params: { id }, body } = request;
         const result = await this._todoRepository.updateAsync(id, body);
-        return response.status(STATUS_CODES.CREATED).send({ status: true, data: result });
+        return ResponseDto.created(true, result, response);
     }
 
     @Delete(':id')
@@ -77,7 +83,7 @@ class TodoController {
     public async deleteAsync (request: Request, response: Response): Promise<any> {
         const { params: { id } } = request;
         await this._todoRepository.deleteByIdAsync(id);
-        return response.status(STATUS_CODES.NO_CONTENT).send({ status: true, data: {} });
+        return ResponseDto.noContent(true, response);
     }
 
 }

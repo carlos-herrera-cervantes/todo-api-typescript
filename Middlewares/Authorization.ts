@@ -1,8 +1,8 @@
 'use strict';
 
 import { Request, Response, NextFunction } from 'express';
-import { STATUS_CODES } from '../Constants/StatusCodes';
 import { verify } from 'jsonwebtoken';
+import { ResponseDto } from '../Models/Response';
 
 class Authorize {
 
@@ -10,7 +10,7 @@ class Authorize {
         const { headers: { authorization } } = request;
 
         if (!authorization) {
-            return response.status(STATUS_CODES.UNAHUTORIZE).send({ status: false, message: response.__('InvalidPermissions') });
+            return ResponseDto.unauthorize(false, response, 'InvalidPermissions');
         }
 
         const isValidToken = await verify(authorization.split(' ').pop(), process.env.SECRET_KEY);
@@ -19,7 +19,7 @@ class Authorize {
             return next();
         }
 
-        return response.status(STATUS_CODES.UNAHUTORIZE).send({ status: false, message: response.__('InvalidToken') });
+        return ResponseDto.unauthorize(false, response, 'InvalidToken');
     }
 
 }

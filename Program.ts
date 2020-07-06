@@ -6,7 +6,7 @@ class Program {
     
     constructor() { }
 
-    public createHostBuilder = (): void =>{
+    public createHostBuilder = (): void => {
         const app = new Startup();
         app.listen();
     }

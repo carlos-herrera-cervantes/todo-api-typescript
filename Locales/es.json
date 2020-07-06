@@ -1,9 +1,14 @@
 {
-    "UserNotFound": "Usuario no encontrado.",
-    "TodoNotFound": "Nota no encontrada.",
-    "InvalidObjectId": "El ID ingresado no es válido.",
-    "InvalidCredentials": "Usuario o contraseña incorrectos.",
-    "InvalidPermissions": "No tienes permiso para ver este contenido.",
-    "InvalidToken": "El token no es válido.",
-    "AccessDenied": "No tienes los suficientes permisos para realizar esta acción."
+	"UserNotFound": "Usuario no encontrado.",
+	"TodoNotFound": "Nota no encontrada.",
+	"InvalidObjectId": "El ID ingresado no es válido.",
+	"InvalidCredentials": "Usuario o contraseña incorrectos.",
+	"InvalidPermissions": "No tienes permiso para ver este contenido.",
+	"InvalidToken": "El token no es válido.",
+	"AccessDenied": "No tienes los suficientes permisos para realizar esta acción.",
+	"InvalidPaginateParams": "Se debe indicar la página y el número de página.",
+	"InvalidPaginateNumbers": "El valor de page debe ser mayor a 0 / El valor de pageSize debe ser mayor a 0 y menor a 100.",
+	"Cannot read property 'criteria' of undefined": "Cannot read property 'criteria' of undefined",
+	"Cannot destructure property 'todos' of '(intermediate value)' as it is null.": "Cannot destructure property 'todos' of '(intermediate value)' as it is null.",
+	"Unexpected token u in JSON at position 0": "Unexpected token u in JSON at position 0"
 }

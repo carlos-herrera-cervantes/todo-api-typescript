@@ -14,6 +14,7 @@ import { IDocumentRepository } from './Repositories/IDocumentRepository';
 import { IAccessTokenRepository } from './Repositories/IAccessTokenRepository';
 import { LoginController } from './Controllers/LoginController';
 import { IUser } from './Models/IUser';
+import { ITodo } from './Models/ITodo';
 
 class Startup extends Server {
 
@@ -52,13 +53,14 @@ class Startup extends Server {
      * @returns {Array}
      */
     private setupControllers (): Array<any> {
-        const userRepository = container.get<IUserRepository>(IDENTIFIERS.IUserRepository);
-        const userController = new UserController(userRepository);
+        const documentRepositoryTodo = container.get<IDocumentRepository<ITodo>>(IDENTIFIERS.IDocumentRepositoryTodo);
         const todoRepository = container.get<ITodoRepository>(IDENTIFIERS.ITodoRepository);
-        const todoController = new TodoController(todoRepository);
-        const documentRepository = container.get<IDocumentRepository<IUser>>(IDENTIFIERS.IDocumentRepositoryUser);
+        const todoController = new TodoController(todoRepository, documentRepositoryTodo);
+        const documentRepositoryUser = container.get<IDocumentRepository<IUser>>(IDENTIFIERS.IDocumentRepositoryUser);
         const accessTokenRepository = container.get<IAccessTokenRepository>(IDENTIFIERS.IAccessTokenRepository);
-        const loginController = new LoginController(documentRepository, accessTokenRepository);
+        const loginController = new LoginController(documentRepositoryUser, accessTokenRepository);
+        const userRepository = container.get<IUserRepository>(IDENTIFIERS.IUserRepository);
+        const userController = new UserController(userRepository, documentRepositoryUser, todoRepository, documentRepositoryTodo);
         const controllers = [ userController, todoController, loginController ];
 
         return controllers;

@@ -1,7 +1,6 @@
 'use strict';
 
 import { Request, Response } from 'express';
-import { STATUS_CODES } from '../Constants/StatusCodes';
 import { localizer } from '../Middlewares/Localizer';
 import { Controller, Post, ClassMiddleware, Middleware } from '@overnightjs/core';
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
@@ -13,6 +12,7 @@ import { Request as RequestDto} from '../Models/Request';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { userExists } from '../Middlewares/UserExists';
+import { ResponseDto } from '../Models/Response';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/users/login')
@@ -36,13 +36,13 @@ class LoginController {
         const isValidPassword = await compare(password, user.password);
 
         if (!isValidPassword) {
-            return response.status(STATUS_CODES.BAD_REQUEST).send({ status: false, message: response.__('InvalidCredentials') });
+            return ResponseDto.badRequest(false, response, 'InvalidCredentials');
         }
 
         const token = sign({ email }, process.env.SECRET_KEY);
         const instance = new AccessToken({ token, email, role: user.role, userId: user._id });
         await this._accessTokenRepository.createAsync(instance);
-        return response.status(STATUS_CODES.OK).send({ status: true, data: { token } });
+        return ResponseDto.ok(true, { token }, response);
     }
 
 }
