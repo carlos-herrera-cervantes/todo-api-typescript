@@ -11,7 +11,7 @@ import { AccessToken } from '../Models/AccessToken';
 import { Request as RequestDto} from '../Models/Request';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
-import { userExists } from '../Middlewares/UserExists';
+import { userExists } from '../Middlewares/User';
 import { ResponseDto } from '../Models/Response';
 
 @ClassMiddleware(localizer.configureLanguages)

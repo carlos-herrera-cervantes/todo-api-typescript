@@ -2,7 +2,7 @@
 
 import { Request, Response } from 'express';
 import { localizer } from '../Middlewares/Localizer';
-import { userExists } from '../Middlewares/UserExists';
+import { userExists } from '../Middlewares/User';
 import { validator } from '../Middlewares/Validator';
 import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } from '@overnightjs/core';
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
@@ -16,6 +16,8 @@ import { IUser } from '../Models/IUser';
 import { ResponseDto } from '../Models/Response'
 import { ITodoRepository } from '../Repositories/ITodoRepository';
 import { ITodo } from '../Models/ITodo';
+import { IAccessTokenRepository } from '../Repositories/IAccessTokenRepository';
+import { patch } from '../Middlewares/Patch';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/users')
@@ -25,17 +27,20 @@ class UserController {
     private readonly _documentRepositoryUser: IDocumentRepository<IUser>;
     private readonly _todoRepository: ITodoRepository;
     private readonly _documentRepositoryTodo: IDocumentRepository<ITodo>
+    private readonly _tokenRepository: IAccessTokenRepository;
 
     constructor (
         userRepository: IUserRepository, 
         documentRepositoryUser: IDocumentRepository<IUser>, 
         todoRepository: ITodoRepository,
-        documentRepositoryTodo: IDocumentRepository<ITodo>
+        documentRepositoryTodo: IDocumentRepository<ITodo>,
+        tokenRepository: IAccessTokenRepository
     ) {
         this._userRepository = userRepository;
         this._documentRepositoryUser = documentRepositoryUser;
         this._todoRepository = todoRepository;
         this._documentRepositoryTodo = documentRepositoryTodo;
+        this._tokenRepository = tokenRepository;
     }
 
     @Get()
@@ -74,7 +79,6 @@ class UserController {
     public async getTodosByUserId (request: Request, response: Response): Promise<any> {
         const { params: { id }, query } = request;
         query.user = id;
-        console.info(query);
         const dto = new RequestDto(query).setSort().setPagination().setCriteria().setRelation();
         const totalDocuments = await this._documentRepositoryTodo.countAsync(dto.queryFilter);
         const todos = await this._todoRepository.getAllAsync(dto.queryFilter);
@@ -95,6 +99,7 @@ class UserController {
     @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(userExists.userExistsById)
+    @Middleware(patch.updateDate)
     @ErrorMiddleware
     public async updateAsync (request: Request, response: Response): Promise<any> {
         const { params: { id }, body } = request;
@@ -110,6 +115,9 @@ class UserController {
     public async deleteAsync (request: Request, response: Response): Promise<any> {
         const { params: { id } } = request;
         await this._userRepository.deleteByIdAsync(id);
+        const dto = new RequestDto({ userId: id }).setCriteria();
+        await this._todoRepository.deleteManyAsync(dto.queryFilter);
+        await this._tokenRepository.deleteManyAsync(dto.queryFilter);
         return ResponseDto.noContent(true, response);
     }
 

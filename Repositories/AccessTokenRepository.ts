@@ -13,6 +13,8 @@ class AccessTokenRepository implements IAccessTokenRepository {
 
     public createAsync = async (token: IAccessToken): Promise<any> => await AccessToken.create(token);
 
+    public deleteManyAsync = async (request: any): Promise<any> => await AccessToken.deleteMany(request.criteria);
+
 }
 
 export { AccessTokenRepository };

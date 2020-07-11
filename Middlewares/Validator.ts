@@ -7,6 +7,7 @@ import container from '../Config/inversify.config';
 import IDENTIFIERS from '../Constants/Identifiers';
 import { StringExtensions } from '../Extensions/StringExtensions';
 import { ResponseDto } from '../Models/Response';
+import _ from 'lodash';
 
 class Validator {
 
@@ -56,7 +57,7 @@ class Validator {
         const { headers: { authorization } } = request;
         const extractedToken = authorization.split(' ').pop();
         const token = await this._tokenRepository.getOneAsync({ criteria: { token: extractedToken } });
-        const isValidRole = roles.includes(token.role);
+        const isValidRole = roles.includes(_.get(token, 'role', ''));
 
         if (isValidRole) {
             return next();

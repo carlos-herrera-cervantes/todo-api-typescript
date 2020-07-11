@@ -55,14 +55,15 @@ class Startup extends Server {
     private setupControllers (): Array<any> {
         const documentRepositoryTodo = container.get<IDocumentRepository<ITodo>>(IDENTIFIERS.IDocumentRepositoryTodo);
         const todoRepository = container.get<ITodoRepository>(IDENTIFIERS.ITodoRepository);
-        const todoController = new TodoController(todoRepository, documentRepositoryTodo);
         const documentRepositoryUser = container.get<IDocumentRepository<IUser>>(IDENTIFIERS.IDocumentRepositoryUser);
         const accessTokenRepository = container.get<IAccessTokenRepository>(IDENTIFIERS.IAccessTokenRepository);
-        const loginController = new LoginController(documentRepositoryUser, accessTokenRepository);
         const userRepository = container.get<IUserRepository>(IDENTIFIERS.IUserRepository);
-        const userController = new UserController(userRepository, documentRepositoryUser, todoRepository, documentRepositoryTodo);
-        const controllers = [ userController, todoController, loginController ];
 
+        const todoController = new TodoController(todoRepository, documentRepositoryTodo);
+        const loginController = new LoginController(documentRepositoryUser, accessTokenRepository);
+        const userController = new UserController(userRepository, documentRepositoryUser, todoRepository, documentRepositoryTodo, accessTokenRepository);
+
+        const controllers = [ userController, todoController, loginController ];
         return controllers;
     }
 }

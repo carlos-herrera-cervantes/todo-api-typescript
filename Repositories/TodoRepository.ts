@@ -28,6 +28,8 @@ class TodoRepository implements ITodoRepository, IDocumentRepository<ITodo> {
 
     public deleteByIdAsync = async (id: String): Promise<any> => await Todo.findOneAndDelete({ _id: id });
 
+    public deleteManyAsync = async (request: any): Promise<any> => await Todo.deleteMany(request.criteria);
+
     public countAsync = async (request: any): Promise<any> => await Todo.countDocuments(request.criteria);
 
 }

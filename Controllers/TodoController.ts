@@ -2,7 +2,7 @@
 
 import { Request, Response } from 'express';
 import { localizer } from '../Middlewares/Localizer';
-import { todoAttribute } from '../Middlewares/TodoAttribute';
+import { todoAttribute } from '../Middlewares/Todo';
 import { validator } from '../Middlewares/Validator';
 import { Controller, Get, Post, Patch, Delete, Middleware, ClassMiddleware } from '@overnightjs/core';
 import { ErrorMiddleware } from '../Decorators/ErrorMiddleware';
@@ -13,6 +13,7 @@ import { ROLES } from '../Constants/Roles';
 import { ResponseDto } from '../Models/Response';
 import { IDocumentRepository } from '../Repositories/IDocumentRepository';
 import { ITodo } from '../Models/ITodo';
+import { patch } from '../Middlewares/Patch';
 
 @ClassMiddleware(localizer.configureLanguages)
 @Controller('api/v1/todos')
@@ -57,7 +58,7 @@ class TodoController {
     @ErrorMiddleware
     public async createAsync (request: Request, response: Response): Promise<any> {
         const { params: { id }, body } = request;
-        body.user = id;
+        body.userId = id;
         const result = await this._todoRepository.createAsync(body);
         return ResponseDto.created(true, result, response);
     }
@@ -67,6 +68,7 @@ class TodoController {
     @Middleware(validator.validateRole(ROLES.Client, ROLES.Admin))
     @Middleware(validator.isValidObjectId)
     @Middleware(todoAttribute.todoExistsById)
+    @Middleware(patch.updateDate)
     @ErrorMiddleware
     public async updateAsync (request: Request, response: Response): Promise<any> {
         const { params: { id }, body } = request;

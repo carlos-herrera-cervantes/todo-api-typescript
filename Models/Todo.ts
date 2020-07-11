@@ -29,25 +29,25 @@ const todoSchema = new Schema({
         type: Date,
         default: moment().utc().format('YYYY-MM-DDTHH:mm:ss')
     },
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
 });
 
 todoSchema.post<ITodo>('findOneAndDelete', async function(document) {
-    const { todos } = await User.findById(document.user);
+    const { todos } = await User.findById(document.userId);
     const cleanTodos = todos.filter(todo => todo.toString() !== document._id.toString());
     const request = { todos: cleanTodos };
-    await User.findOneAndUpdate({ _id: document.user }, { $set: request }, { new: true });
+    await User.findOneAndUpdate({ _id: document.userId }, { $set: request }, { new: true });
 });
 
 todoSchema.post('save', async function(document) {
-    const { user } = await Todo.findById(document._id);
-    const { todos } = await User.findById(user);
+    const { userId } = await Todo.findById(document._id);
+    const { todos } = await User.findById(userId);
     todos.push(document._id);
     const response = { todos };
-    await User.findOneAndUpdate({ _id: user }, { $set: response }, { new: true });
+    await User.findOneAndUpdate({ _id: userId }, { $set: response }, { new: true });
 });
 
 const Todo = mongoose.model<ITodo>('Todo', todoSchema);

@@ -8,7 +8,7 @@ interface ITodo extends Document {
     done: Boolean,
     createdAt: Date,
     updatedAt: Date,
-    user: mongoose.Schema.Types.ObjectId
+    userId: mongoose.Schema.Types.ObjectId
 }
 
 export { ITodo }

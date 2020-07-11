@@ -12,6 +12,8 @@ interface ITodoRepository {
     updateAsync(id: String, todo: ITodo): Promise<any>;
 
     deleteByIdAsync(id: String): Promise<any>;
+
+    deleteManyAsync(id: String): Promise<any>;
 }
 
 export { ITodoRepository };
